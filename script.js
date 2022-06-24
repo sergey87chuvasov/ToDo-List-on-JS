@@ -1,5 +1,6 @@
 // Globals
 const todoList = document.getElementById('todo-list');
+const userSelect = document.getElementById('user-todo');
 let todos = [];
 let users = [];
 
@@ -36,6 +37,15 @@ function printTodo({ id, userId, title, completed }) {
   todoList.prepend(li);
 }
 
+// one option for one user
+function createUserOption(user) {
+  const option = document.createElement('option');
+  option.value = user.id;
+  option.innerText = user.name;
+
+  userSelect.append(option);
+}
+
 // Event logic - task - to get users and somwhere to save
 function initApp() {
   // for us important to get all date - we use promise.all
@@ -45,6 +55,7 @@ function initApp() {
 
     // after we got it - we should send them in разметку
     todos.forEach((todo) => printTodo(todo));
+    users.forEach((user) => createUserOption(user));
   });
 }
 
