@@ -1,4 +1,5 @@
 // Globals
+const todoList = document.getElementById('todo-list');
 let todos = [];
 let users = [];
 
@@ -6,14 +7,44 @@ let users = [];
 // event when the document is fully loaded - make func initApp
 document.addEventListener('DOMContentLoaded', initApp);
 
+// basic logic
+function getUserName(userId) {
+  const user = users.find((u) => u.id === userId);
+  return user.name;
+}
+
+function printTodo({ id, userId, title, completed }) {
+  const li = document.createElement('li');
+  li.className = 'todo-item';
+  li.dataset.id = id;
+  li.innerHTML = `<span>${title} <i>by</i> <b>${getUserName(
+    userId
+  )}</b></span>`;
+
+  const status = document.createElement('input');
+  status.type = 'checkbox';
+  status.checked = completed;
+
+  const close = document.createElement('span');
+  // html = x
+  close.innerHTML = '&times';
+  close.className = 'close';
+
+  li.prepend(status);
+  li.append(close);
+
+  todoList.prepend(li);
+}
+
 // Event logic - task - to get users and somwhere to save
 function initApp() {
   // for us important to get all date - we use promise.all
   // values its - arr - and we can use деструктуризацию
-  Promise.all([getAllTodos(), getAllUsers]).then((values) => {
+  Promise.all([getAllTodos(), getAllUsers()]).then((values) => {
     [todos, users] = values;
 
     // after we got it - we should send them in разметку
+    todos.forEach((todo) => printTodo(todo));
   });
 }
 
