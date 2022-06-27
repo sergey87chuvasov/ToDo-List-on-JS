@@ -34,6 +34,7 @@ function printTodo({ id, userId, title, completed }) {
   // html = x
   close.innerHTML = '&times';
   close.className = 'close';
+  close.addEventListener('click', handleClose);
 
   li.prepend(status);
   li.append(close);
@@ -48,6 +49,15 @@ function createUserOption(user) {
   option.innerText = user.name;
 
   userSelect.append(option);
+}
+
+function removeTodo(todoId) {
+  todos = todos.filter((todo) => todo.id !== todoId);
+
+  const todo = todoList.querySelector(`[data-id='${todoId}']`);
+  todo.querySelector('input').removeEventListener('change', handleTodoChange);
+  todo.querySelector('.close').removeEventListener('click', handleClose);
+  todo.remove();
 }
 
 // Event logic - task - to get users and somwhere to save
@@ -78,6 +88,11 @@ function handleTodoChange() {
   const completed = this.checked;
 
   toggleTodoComplete(todoId, completed);
+}
+
+function handleClose() {
+  const todoId = this.parentElement.dataset.id;
+  deleteTodo(todoId);
 }
 
 // Async logic
@@ -126,5 +141,21 @@ async function toggleTodoComplete(todoId, completed) {
 
   if (!response.ok) {
     //errror
+  }
+}
+
+async function deleteTodo(todoId) {
+  const response = await fetch(
+    `https://jsonplaceholder.typicode.com/todos/${todoId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  if (response.ok) {
+    removeTodo(todoId);
   }
 }
